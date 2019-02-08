@@ -1,3 +1,8 @@
+-- |
+-- Module      : Test.Hspec.Codewars
+-- Description : Utility functions for testing on Codewars with Hspec
+-- License     : MIT
+
 {-# LANGUAGE RecordWildCards #-}
 module Test.Hspec.Codewars (
   Hidden(..),
@@ -55,7 +60,13 @@ declToDesc decl = case Q.importSpecs decl of
 treatPrelude :: [ImportDesc] -> [ImportDesc]
 treatPrelude xs = if any (\x -> mName x == "Prelude") xs then xs else ImportAll "Prelude" : xs
 
-data Hidden = Module {moduleName :: String} | FromModule {moduleName :: String, symbolName :: String} deriving (Eq)
+data Hidden
+  -- | Module to be hidden
+  = Module {moduleName :: String}
+  -- | Symbol from a module to be hidden
+  | FromModule {moduleName :: String, symbolName :: String}
+  deriving (Eq)
+
 instance Show Hidden where
   show (Module{..}) = moduleName
   show (FromModule{..}) = moduleName ++ "." ++ symbolName
@@ -77,12 +88,21 @@ hidden hiddens = do
   let message = "Import declarations must hide " ++ show hiddens
   assertBool message $ null failures
   
+-- | Check that solution hides a module or a symbol from a module.
+--
+-- > solutionShouldHide $ FromModule "Prelude" "head"
 solutionShouldHide :: Hidden -> Expectation
 solutionShouldHide = hidden . pure
 
+-- | Check that solution hides all of given modules and symbols.
+--
+-- > solutionShouldHideAll [FromModule "Prelude" "head", Module "Data.Set"]
 solutionShouldHideAll :: [Hidden] -> Expectation
 solutionShouldHideAll = hidden
 
+-- | Create approximately equal expectation with margin.
+--
+-- > shouldBeApprox' = shouldBeApproxPrec 1e-9
 shouldBeApproxPrec :: (Fractional a, Ord a, Show a) => a -> a -> a -> Expectation
 shouldBeApproxPrec margin actual expected =
   if abs (actual - expected) < abs margin * max 1 (abs expected)
@@ -95,5 +115,11 @@ shouldBeApproxPrec margin actual expected =
       "\n but got: ", show actual]
 
 infix 1 `shouldBeApprox`
+
+-- | Predefined approximately equal expectation.
+-- @actual \`shouldBeApprox\` expected@ sets the expectation that @actual@ is
+-- approximately equal to @expected@ within the margin of @1e-6@.
+--
+-- > sqrt 2.0 `shouldBeApprox` (1.4142135 :: Double)
 shouldBeApprox :: (Fractional a, Ord a, Show a) => a -> a -> Expectation
 shouldBeApprox = shouldBeApproxPrec 1e-6
