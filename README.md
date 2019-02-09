@@ -1,37 +1,65 @@
-# Hspec Codewars
+# Test.Hspec.Codewars
 
 Utility functions for testing on Codewars with Hspec.
 
-## Functions
-
 ### Blacklisting
+
+#### `Hidden`
+
+```haskell
+data Hidden
+  -- | Module to be hidden
+  = Module {moduleName :: String}
+  -- | Symbol from a module to be hidden
+  | FromModule {moduleName :: String, symbolName :: String}
+```
+
+#### `solutionShouldHide`
 
 ```haskell
 solutionShouldHide :: Hidden -> Expectation
-
--- solutionShouldHide $ FromModule "Prelude" "head"
 ```
+
 Check that solution hides a module or a symbol from a module.
 
 ```haskell
-solutionShouldHideAll :: [Hidden] -> Expectation
-
--- solutionShouldHideAll [FromModule "Prelude" "head", Module "Data.Set"]
+solutionShouldHide $ FromModule "Prelude" "head"
 ```
+
+#### `solutionShouldHideAll`
+
+```haskell
+solutionShouldHideAll :: [Hidden] -> Expectation
+```
+
 Check that solution hides all of given modules and symbols.
+
+```haskell
+solutionShouldHideAll [FromModule "Prelude" "head", Module "Data.Set"]
+```
 
 ### Approximate Equality
 
+#### `shouldBeApprox`
+
 ```haskell
 shouldBeApprox :: (Fractional a, Ord a, Show a) => a -> a -> Expectation
-
--- sqrt 2.0 `shouldBeApprox` (1.4142135 :: Double)
 ```
+
 Predefined approximately equal expectation with error margin `1e-6`.
 
 ```haskell
-shouldBeApproxPrec :: (Fractional a, Ord a, Show a) => a -> a -> a -> Expectation
-
--- shouldBeApprox' = shouldBeApproxPrec 1e-9
+sqrt 2.0 `shouldBeApprox` (1.4142135 :: Double)
 ```
+
+#### `shouldBeApproxPrec`
+
+```haskell
+shouldBeApproxPrec :: (Fractional a, Ord a, Show a) => a -> a -> a -> Expectation
+```
+
 Create approximately equal expectation with margin.
+
+```haskell
+shouldBeApprox' = shouldBeApproxPrec 1e-9
+```
