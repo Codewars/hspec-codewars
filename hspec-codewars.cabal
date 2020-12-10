@@ -1,0 +1,20 @@
+cabal-version: >=1.10
+
+name: hspec-codewars
+version: 0.1.0
+synopsis: Utility functions for testing on Codewars with Hspec
+license: MIT
+build-type: Simple
+
+library
+  hs-source-dirs:
+      src
+  build-depends:
+      base ==4.*
+    , hspec ==2.*
+    , HUnit ==1.*
+    , haskell-src-exts ==1.*
+  exposed-modules:
+      Test.Hspec.Codewars
+  default-language:
+      Haskell2010
